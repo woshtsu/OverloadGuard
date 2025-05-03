@@ -1,4 +1,4 @@
-import { createRequire } from 'node:module'
+import { createRequire } from 'node:module';
 
-const require = createRequire(import.meta.url)
-export const DataJson = require('../Models/data.json')
+const require = createRequire(import.meta.url);
+export const DataJson = require('../Models/data.json');

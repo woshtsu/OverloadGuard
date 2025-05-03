@@ -28,15 +28,17 @@ export const ServerStatsChart = ({ title, event }) => {
         monitorSocket.on(event, (data) => {
             const { time, value } = data;
 
-            console.log('Datos recibidos:', data)
+            if (event === 'request-stats') {
+                console.log('Datos recibidos:', data)
+            }
 
             const point = { time: time, value: value };
 
             dataRef.current.push(point);
 
-            if (dataRef.current.length > 60) {
-                dataRef.current.shift();
-            }
+            // if (dataRef.current.length > 60) {
+            //     dataRef.current.shift();
+            // }
 
             seriesRef.current.setData(dataRef.current);
         });

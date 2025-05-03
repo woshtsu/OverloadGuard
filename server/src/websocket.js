@@ -1,113 +1,83 @@
-import { Server } from 'socket.io';
 import osUtils from 'os-utils';
+import { sharedState } from './sharedState.js';
 
-export function initWS({ server }) {
+export function initWS ({ websocketserver }) {
+  const testNS = websocketserver.of('/test');
+  const monitorNs = websocketserver.of('/monitor');
 
-  const varTest = {
-    "r": [],
-    "cpu": [],
-    "T": []
-  }
-
-  const io = new Server(server, {
-    path: '/websocket/',
-    cors: {
-      origin: 'http://localhost:5173',
-      methods: ['GET', 'POST'],
-    },
-  })
-
-  const testNS = io.of('/test')
-  const monitorNs = io.of('/monitor')
-
-  function getCPUPercent() {
+  function getCPUPercent () {
     return new Promise((resolve) => {
       osUtils.cpuUsage((cpuPercent) => {
-        resolve(parseFloat((cpuPercent * 100).toFixed(2)))
-      })
-    })
+        resolve(parseFloat((cpuPercent * 100).toFixed(2)));
+      });
+    });
   }
 
   monitorNs.on('connection', socket => {
-    console.log(`cliente conectado a monitor con ID: ${socket.id}`)
+    console.log(`Cliente conectado a monitor con ID: ${socket.id}`);
 
     const intervalId = setInterval(async () => {
-      const requestCount = 0
-      const totalTime = 0
+      const rps = sharedState.calculateRPS(); // Calcular el RPS
+      const time = Math.floor(Date.now() / 1000);
+      const cpuPercent = await getCPUPercent();
 
-      const time = Math.floor(Date.now() / 1000)
-      const cpuPercent = await getCPUPercent()
-
+      // Emitir datos al cliente conectado a /monitor
       socket.emit('cpu-stats', {
-        time: time,
-        value: cpuPercent
-      })
+        time,
+        value: cpuPercent,
+      });
 
       socket.emit('request-stats', {
-        time: time,
-        value: 1
-      })
+        time,
+        value: rps,
+      });
 
-      console.log(`el tiempo: ${time} y cpu: ${cpuPercent}`)
-
-    }, 1000)
+      // Almacenar los datos en sharedState
+      sharedState.addAccumulatedData(rps, cpuPercent, null);
+    }, 1000);
 
     socket.on('disconnect', () => {
-      clearInterval(intervalId)
-      console.log('Cliente desconectado')
-    })
-  })
+      clearInterval(intervalId);
+      console.log('Cliente desconectado de monitor');
+    });
+  });
 
   testNS.on('connection', socket => {
-    console.log(`cliente conectado a test con ID: ${socket.id}`)
+    console.log(`Cliente conectado a test con ID: ${socket.id}`);
 
-  })
+    const intervalId = setInterval(async () => {
+      const rps = sharedState.calculateRPS(); // Calcular el RPS
+      const time = Math.floor(Date.now() / 1000);
+      const cpuPercent = await getCPUPercent();
 
+      // Almacenar los datos en sharedState
+      sharedState.addRPS(rps);
+      sharedState.addCPUPercent(cpuPercent);
 
-  /**/
+      // Emitir datos al cliente
+      socket.emit('test-rps', { time, value: rps });
+      socket.emit('test-cpu', { time, value: cpuPercent });
 
-  // io.on('connection', (socket) => {
-  //   console.log('_Cliente conectado al WS')
+      const responseTimes = sharedState.getResponseTimes();
+      const lastResponseTime = responseTimes.length > 0 ? responseTimes[responseTimes.length - 1] : 0;
 
-  //   const intervalId = setInterval(() => {
-  //     os.cpuUsage((cpu) => {
-  //       const time = Math.floor(Date.now() / 1000) // Tiempo actual en segundos
-  //       sharedState.cpuPercent = parseFloat((cpu * 100).toFixed(2)) // Actualizar el uso de CPU
+      socket.emit('test-response-time', { time, value: lastResponseTime });
+    }, 1000);
 
-  //       const averageResponseTime =
-  //         sharedState.requestCount > 0
-  //           ? sharedState.totalTime / sharedState.requestCount
-  //           : 0
+    socket.on('disconnect', () => {
+      clearInterval(intervalId);
+      console.log('Cliente desconectado de test');
 
-  //       socket.emit('cpu-stats', {
-  //         time: time,
-  //         value: sharedState.cpuPercent,
-  //       })
+      // Obtener los datos acumulados
+      const rpsData = sharedState.getRPS();
+      const cpuData = sharedState.getCPUPercent();
+      const responseTimeData = sharedState.getResponseTimes();
 
-  //       socket.emit('request-stats', {
-  //         time: time,
-  //         value: sharedState.requestCount,
-  //       })
-
-  //       socket.emit('response-stats', {
-  //         time: time,
-  //         value: averageResponseTime.toFixed(2),
-  //       })
-
-  //       // console.log(
-  //       //   `CPU: ${sharedState.cpuPercent}%, Requests: ${sharedState.requestCount}, Avg Response Time: ${averageResponseTime.toFixed(2)} ms`
-  //       // )
-
-  //       sharedState.requestCount = 0
-  //       sharedState.totalTime = 0
-  //     });
-  //   }, 1000)
-
-  //   socket.on('disconnect', () => {
-  //     clearInterval(intervalId)
-  //     console.log('Cliente desconectado')
-  //   })
-  // })
-
-  return 0
+      console.log('Datos acumulados:', {
+        rps: rpsData,
+        cpuPercent: cpuData,
+        responseTimes: responseTimeData,
+      });
+    });
+  });
 }
