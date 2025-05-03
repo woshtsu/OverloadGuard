@@ -57,3 +57,6 @@ npm install
 npm run dev
 ```
 
+Una ves tengas todo instalado ve al ruta de Test en el Front para iniciar el test, el test finaliza al desconectarte de esa pagina, una vez terminado puedes ir a http://localhost:1234/server/save-metrics para guardar las metricas, o hacerlo desde web.http, una vez tengas las metricas, debes ejecutar el archivo AjustarModelo.py para hacer la regresion lineal que te devolvera por consola los valores que necesitamos para el modelo, ademas de crear un json con esos mismos valores para leerlos
+
+seria bueno crear mas simulaciones de trafico de red para encontrar errores y comprobar la validez del modelo

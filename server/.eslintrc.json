@@ -9,9 +9,17 @@
     "sourceType": "module"
   },
   "rules": {
-    "semi": ["error", "always"],
-    "comma-dangle": ["error", "always-multiline"],
-    "space-before-function-paren": ["error", "always"]
+    "semi": [
+      "error",
+      "never"
+    ],
+    "comma-dangle": [
+      "error",
+      "always-multiline"
+    ],
+    "space-before-function-paren": [
+      "error",
+      "always"
+    ]
   }
 }
-
