@@ -15,14 +15,20 @@ export const ServerStatsChart = ({ title, event }) => {
             timeScale: { timeVisible: true, secondsVisible: true },
         });
 
-        seriesRef.current = chart.addSeries(LineSeries, { color: '#2962FF' });
+        seriesRef.current = chart.addSeries(LineSeries, { color: '#2962FF' })
 
         chart.timeScale().fitContent();
 
-        const socket = io('http://localhost:1234', { path: '/websocket/' });
+        const monitorSocket = io('http://localhost:1234/monitor', { path: '/websocket/' })
 
-        socket.on(event, (data) => {
+        monitorSocket.on('connect', () => {
+            console.log(`Conectado al namespace /monitor con ID: ${monitorSocket.id}`)
+        })
+
+        monitorSocket.on(event, (data) => {
             const { time, value } = data;
+
+            console.log('Datos recibidos:', data)
 
             const point = { time: time, value: value };
 
@@ -36,7 +42,7 @@ export const ServerStatsChart = ({ title, event }) => {
         });
 
         return () => {
-            socket.disconnect();
+            monitorSocket.disconnect();
             chart.remove();
         };
     }, [event]);

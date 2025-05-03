@@ -7,31 +7,21 @@ import { initWS } from './websocket.js'
 const app = express()
 const server = createServer(app)
 
-const sharedState = {
-  requestCount: 0,
-  cpuPercent: 0,
-  totalTime: 0,
-}
-
-const initValues = initWS({ server: server, sharedState })
-let alpha = initValues.alpha
-let beta = initValues.beta
-let T0 = initValues.T0
-
-// Middleware para contar solicitudes
 app.use((req, res, next) => {
-  sharedState.requestCount++
+  requestCount++
 
   const start = Date.now();
   res.on('finish', () => {
     const duration = Date.now() - start
-    sharedState.totalTime += duration
+    totalTime += duration
   })
 
   next()
 })
 
-// Resto del código...
+const initValues = initWS({ server: server })
+
+
 
 // app.use(statusMonitor()) 
 // app.use(logger('dev'))
