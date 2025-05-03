@@ -1,11 +1,11 @@
 import osUtils from 'os-utils';
 import { sharedState } from './sharedState.js';
 
-export function initWS ({ websocketserver }) {
+export function initWS({ websocketserver }) {
   const testNS = websocketserver.of('/test');
   const monitorNs = websocketserver.of('/monitor');
 
-  function getCPUPercent () {
+  function getCPUPercent() {
     return new Promise((resolve) => {
       osUtils.cpuUsage((cpuPercent) => {
         resolve(parseFloat((cpuPercent * 100).toFixed(2)));
@@ -31,9 +31,6 @@ export function initWS ({ websocketserver }) {
         time,
         value: rps,
       });
-
-      // Almacenar los datos en sharedState
-      sharedState.addAccumulatedData(rps, cpuPercent, null);
     }, 1000);
 
     socket.on('disconnect', () => {
@@ -59,9 +56,8 @@ export function initWS ({ websocketserver }) {
       socket.emit('test-cpu', { time, value: cpuPercent });
 
       const responseTimes = sharedState.getResponseTimes();
-      const lastResponseTime = responseTimes.length > 0 ? responseTimes[responseTimes.length - 1] : 0;
 
-      socket.emit('test-response-time', { time, value: lastResponseTime });
+      socket.emit('test-response-time', { time, value: responseTimes });
     }, 1000);
 
     socket.on('disconnect', () => {

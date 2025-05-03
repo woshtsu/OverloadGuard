@@ -22,13 +22,13 @@ initWS({ websocketserver: io });
 // Crear un stream personalizado para capturar los logs de Morgan
 const morganStream = {
   write: (message) => {
-    // Extraer el tiempo de respuesta del mensaje
-    const match = message.match(/(\d+\.\d+) ms$/); // Buscar el tiempo de respuesta en milisegundos
+    console.log('LOG DE MORGAN:', message)
+    const match = message.match(/- (\d+\.\d*) ms/);
+
     if (match) {
-      const responseTime = parseFloat(match[1]); // Convertir a número
-      if (!isNaN(responseTime)) {
-        sharedState.addResponseTime(responseTime); // Almacenar en sharedState
-      }
+      const responseTime = parseFloat(match[1]);
+
+      sharedState.addResponseTime(responseTime, Date.now())
     }
   },
 };
@@ -43,6 +43,8 @@ app.use(
 // Middleware para incrementar el contador de solicitudes
 app.use((req, res, next) => {
   sharedState.incrementRequestCount();
+  console.log("se incremento el requestCount");
+
   next();
 });
 

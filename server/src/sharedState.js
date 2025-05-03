@@ -28,9 +28,9 @@ export const sharedState = {
 
   // Arrays para almacenar datos acumulados
   accumulatedData: {
-    rps: [],
-    cpuPercent: [],
-    responseTimes: [],
+    rps: [],            // [number]
+    cpuPercent: [],     // [number]
+    responseTimes: [],  // [{ time: number, value: number }]
   },
 
   // Métodos para añadir datos específicos
@@ -46,9 +46,12 @@ export const sharedState = {
     }
   },
 
-  addResponseTime: (responseTime) => {
+  addResponseTime: (responseTime, timestamp = Date.now()) => {
     if (typeof responseTime === 'number' && !isNaN(responseTime)) {
-      sharedState.accumulatedData.responseTimes.push(parseFloat(responseTime.toFixed(2)));
+      sharedState.accumulatedData.responseTimes.push({
+        time: timestamp,
+        value: responseTime,
+      });
     }
   },
 
@@ -58,4 +61,5 @@ export const sharedState = {
   getCPUPercent: () => sharedState.accumulatedData.cpuPercent,
 
   getResponseTimes: () => sharedState.accumulatedData.responseTimes,
+  getaccumulatedData: () => sharedState.accumulatedData,
 };

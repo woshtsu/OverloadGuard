@@ -4,11 +4,6 @@
 
   <h1>OverloadGuard™</h1>
 
-  [![CircleCI][ci-img]][ci-link]
-  [![npm version][npm-version-img]][npm-link]
-  [![npm bundle size][bundle-size-img]][bundle-size-link]
-  [![Dependencies count][deps-count-img]][bundle-size-link]
-  [![Downloads][npm-downloads-img]][npm-link]
 </div>
 
 <!-- markdownlint-enable no-inline-html -->
@@ -16,35 +11,31 @@
 MODELO DE TIEMPO DE RESPUESTA ESTIMADO: T(t)
 
 Este modelo representa una estimación del tiempo de respuesta del servidor en función de dos variables dinámicas:
-1. La tasa de llegada de peticiones en un intervalo (requestCount por segundo).
+1. La tasa de llegada de peticiones en un intervalo (request por segundo).
 2. El porcentaje de uso de CPU del sistema (cpuPercent).
 
 La fórmula utilizada es:
 
-    T(t) = T0 + α ⋅ requestCount + β ⋅ cpuPercent
+    T(t) = T0 + α ⋅ rps + β ⋅ cpuPercent
 
 Donde:
-- T(t): Tiempo de respuesta estimado en milisegundos.
-- T0: Tiempo base de respuesta cuando no hay carga, típicamente una constante pequeña (por ejemplo, 1 ms).
-- α (alpha): Coeficiente de sensibilidad al número de peticiones.
-- β (beta): Coeficiente de sensibilidad al uso de CPU.
+- T(t): Tiempo de respuesta estimado.
+- T0: Tiempo base de respuesta cuando no hay carga (valor devuelto por python).
+- α (alpha): Coeficiente de sensibilidad al número de peticiones (valor devuelto por python).
+- β (beta): Coeficiente de sensibilidad al uso de CPU (valor devuelto por python).
 
-Valores usados:
-  const alpha = 0.01; // Cada petición por segundo aumenta 0.01 ms al tiempo de respuesta.
-  const beta  = 0.02; // Cada 1% de uso de CPU añade 0.02 ms al tiempo de respuesta.
+ENTRADA DE PYTHON:
+- Un csv de la siguiente forma (con arrays de rpsData, cpuData y responseTimeData):
+r,cpu,T
+300,65.3,12.5
+280,66.7,11.8
+320,68.2,13.1
 
-Estos valores fueron elegidos de forma heurística para simular un sistema con carga moderada. Se pueden ajustar con base en pruebas empíricas o datos reales del sistema.
-
-ENTRADA DEL MODELO:
-- requestCount (número de peticiones por segundo, contado por el middleware de Express).
-- cpuPercent (medido por el paquete os-utils cada segundo).
-
-SALIDA DEL MODELO:
-- T(t): Un valor numérico estimado que representa el tiempo de respuesta esperado en ese segundo.
+SALIDA DE PYTHON (luego de la regresion lineal):
+- valores de T0, alpha y beta
 
 DÓNDE SE VE LA SALIDA:
-- Se puede emitir a través de WebSocket como un evento adicional (por ejemplo: 'response-model').
-- También se puede almacenar o graficar desde el cliente que recibe los datos para analizar el rendimiento estimado del servidor en tiempo real.
+- los valores de T0, alpha y beta se guardan en un json
 
 Este modelo permite anticipar la degradación del servicio bajo carga creciente y es útil para análisis de rendimiento, simulación o autoescalado.
 

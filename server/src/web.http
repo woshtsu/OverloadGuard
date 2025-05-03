@@ -5,6 +5,8 @@ GET http://localhost:1234/stats
 
 ###
 GET http://localhost:1234/server/
+###
+GET http://localhost:1234/server/data
 
 ###
 GET http://localhost:1234/server/save-metrics
