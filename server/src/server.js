@@ -32,22 +32,20 @@ const morganStream = {
   },
 }
 
-// Configurar Morgan con el stream personalizado
 app.use(
   morgan(':method :url :status :res[content-length] - :response-time ms', {
     stream: morganStream,
-  })
+  }),
 )
 
-// Middleware para incrementar el contador de solicitudes
 app.use((req, res, next) => {
   sharedState.incrementRequestCount()
-  console.log("se incremento el requestCount")
+  //console.log('se incremento el requestCount')
 
   next()
 })
 
-// app.use(statusMonitor()) 
+// app.use(statusMonitor())
 // app.use(logger('dev'))
 app.use('/server', routerServer)
 
@@ -58,4 +56,4 @@ app.get('/', (req, res) => {
 const desiredPort = process.env.PORT ?? 1234
 server.listen(desiredPort, () => {
   console.log(`Servidor escuchando en http://localhost:${desiredPort}`)
-}) 
+})
