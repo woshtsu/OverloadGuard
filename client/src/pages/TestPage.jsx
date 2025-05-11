@@ -21,6 +21,28 @@ export function TestPage() {
     };
   }, []);
 
+  const handleSaveMetrics = () => {
+    // detener testeo
+    setIsTestRunning(false);
+    console.log('Test detenido. Guardando métricas...');
+    //endpoint
+    fetch('/save-metrics', {
+      method: 'GET',
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Error en la respuesta del servidor');
+      }
+      return response.text();
+    })
+    .then(data => {
+      console.log('Respuesta del servidor:', data);
+    })
+    .catch(error => {
+      console.error('Error al guardar métricas:', error);
+    });
+  };
+
   if (!socket) {
     return <div>Cargando...</div>;
   }
@@ -32,6 +54,8 @@ export function TestPage() {
       <TestChart title={'Peticiones por segundo'} event={'test-rps'} socket={socket} />
       <TestChart title={'Porcentaje de CPU'} event={'test-cpu'} socket={socket} />
       <TestChart title={'Tiempos de respuesta'} event={'test-response-time'} socket={socket} />
+
+      <button onClick={handleSaveMetrics}>Detener Test y Guardar</button>
     </section>
   );
 }
