@@ -6,12 +6,12 @@ import time
 # Configuración
 url = 'http://localhost:1234/server/archivo1'
 num_usuarios_rafaga = 10
-tiempo_simulacion_total = 60  # segundos
+tiempo_simulacion_total = 120  # segundos
 peticiones_por_rafaga_min = 3
 peticiones_por_rafaga_max = 8
 tiempo_entre_peticiones_rafaga = 0.2 # segundos
-tiempo_inactividad_min = 10 # segundos
-tiempo_inactividad_max = 25 # segundos
+tiempo_inactividad_min = 2 # segundos
+tiempo_inactividad_max = 15 # segundos
 
 async def send_request(session, user_id, req_num_in_burst):
     try:

@@ -40,7 +40,7 @@ app.use(
 
 app.use((req, res, next) => {
   sharedState.incrementRequestCount()
-  //console.log('se incremento el requestCount')
+  // console.log('se incremento el requestCount')
 
   next()
 })
