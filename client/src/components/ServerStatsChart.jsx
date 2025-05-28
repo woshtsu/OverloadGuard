@@ -28,10 +28,6 @@ export const ServerStatsChart = ({ title, event }) => {
         monitorSocket.on(event, (data) => {
             const { time, value } = data;
 
-            if (event === 'request-stats') {
-                console.log('Datos recibidos:', data)
-            }
-
             const point = { time: time, value: value };
 
             dataRef.current.push(point);

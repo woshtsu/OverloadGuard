@@ -20,39 +20,30 @@ routerServer.get('/', (req, res) => {
 routerServer.get('/data', (req, res) => {
   res.json(sharedState.getaccumulatedData())
 })
+
 // Endpoint especial para el final de nuestro test
 routerServer.get('/save-metrics', (req, res) => {
   try {
     const rpsData = sharedState.getRPS()
     const cpuData = sharedState.getCPUPercent()
-    const responseTimes = sharedState.getResponseTimes()
+    const responseTimes = sharedState.getaddaverageResponseTime()
 
-    const now = Date.now()
+    const ginitTest = sharedState.getginitTest()
+    const gfinalTest = sharedState.getgfinalTest()
 
-    const responseTimesPorSegundo = Array.from({ length: rpsData.length }, () => []) // creamos un array lleno de arrays de la longitud de rpsData
+    // Convertir tiempos a segundos desde el inicio
+    const startTime = Math.floor(ginitTest / 1000)
+    const endTime = Math.floor(gfinalTest / 1000)
 
-    for (const rt of responseTimes) {
-      const segundosDesdeAhora = Math.floor((now - rt.time) / 1000) // obtenemos los segundos desde el momento de ejecutar el endpoint
-      const index = rpsData.length - 1 - segundosDesdeAhora // obtenemos el indice del tiempo de respuesta respecto a cada rps (sincronizamos)
-
-      if (index >= 0 && index < rpsData.length) { // Limitamos por rango de longitud de rspDATA
-        responseTimesPorSegundo[index].push(rt.value) // llenamos nuestro Array con los valores filtrados
-      }
-    }
-
-    const avgResponseTimesPorSegundo = responseTimesPorSegundo.map(group =>
-      group.length > 0 ? group.reduce((a, b) => a + b, 0) / group.length : 0, // ternario evitar division entre 0
-    )
-
-    if (rpsData.length !== cpuData.length || rpsData.length !== avgResponseTimesPorSegundo.length) {
-      throw new Error('Los arrays de datos no tienen la misma longitud después del procesamiento')
-    }
-
+    // Filtrar datos basados en el tiempo en segundos
     const datos = rpsData.map((r, i) => ({
       r,
       cpu: cpuData[i],
-      T: avgResponseTimesPorSegundo[i],
-    }))
+      T: responseTimes[i],
+    })).filter((_, i) => {
+      const currentTime = Math.floor((ginitTest + i * 1000) / 1000)
+      return currentTime >= startTime && currentTime <= endTime
+    })
 
     const campos = ['r', 'cpu', 'T']
     const json2csv = new Parser({ fields: campos })
@@ -61,7 +52,15 @@ routerServer.get('/save-metrics', (req, res) => {
     fs.writeFileSync('metrics.csv', csv)
 
     console.log('Datos guardados en metrics.csv')
-    res.status(200).send('Métricas guardadas exitosamente en metrics.csv')
+    res.status(200).json({
+      message: 'Datos guardados en metrics.csv',
+      ginitTest,
+      gfinalTest,
+      rpsData,
+      cpuData,
+      responseTimes,
+      datos,
+    })
   } catch (error) {
     console.error('Error al guardar las métricas:', error)
     res.status(500).send('Error al guardar las métricas')

@@ -27,5 +27,21 @@
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-n": "^16.6.2",
     "eslint-plugin-promise": "^6.6.0"
+  },
+  "eslintConfig": {
+    "extends": "standard",
+    "env": {
+      "node": true
+    },
+    "rules": {
+      "n/no-missing-require": "off",
+      "n/no-missing-import": "off",
+      "n/no-unpublished-require": "off",
+      "n/no-unpublished-import": "off",
+      "comma-dangle": [
+        "error",
+        "always-multiline"
+      ]
+    }
   }
 }

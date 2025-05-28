@@ -9,7 +9,7 @@ initial_clients = 10
 max_clients = 120
 step_clients = 10
 simulation_time_per_step = 10  # segundos
-total_simulation_time = 60     # segundos
+total_simulation_time = 120     # segundos
 
 async def send_request(session):
     try:

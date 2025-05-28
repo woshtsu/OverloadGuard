@@ -10,8 +10,8 @@ tiempo_simulacion_total = 60  # segundos
 peticiones_por_rafaga_min = 3
 peticiones_por_rafaga_max = 8
 tiempo_entre_peticiones_rafaga = 0.2 # segundos
-tiempo_inactividad_min = 10 # segundos
-tiempo_inactividad_max = 25 # segundos
+tiempo_inactividad_min = 1 # segundos
+tiempo_inactividad_max = 5 # segundos
 
 async def send_request(session, user_id, req_num_in_burst):
     try:

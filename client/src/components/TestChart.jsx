@@ -21,7 +21,10 @@ export const TestChart = ({ title, event, socket }) => {
     // Escuchar el evento específico del WebSocket
     socket.on(event, (data) => {
       const { time, value } = data;
-
+      if(event === 'test-response-time'){
+        console.log("en test response time")
+        console.log(data)
+      }
       const point = { time: time, value: value };
 
       dataRef.current.push(point);

@@ -40,36 +40,28 @@ export function initWS ({ websocketserver }) {
 
   testNS.on('connection', socket => {
     console.log(`Cliente conectado a test con ID: ${socket.id}`)
-
+    sharedState.inicioTest()
     const intervalId = setInterval(async () => {
       const rps = sharedState.calculateRPS()
       const time = Math.floor(Date.now() / 1000)
       const cpuPercent = await getCPUPercent()
-
+      const averageResponseTime = sharedState.calculateResponseTime()
+      // console.log('rps:', rps)
+      // console.log('averageResponseTime:', averageResponseTime)
       sharedState.addRPS(rps)
       sharedState.addCPUPercent(cpuPercent)
+      sharedState.addaverageResponseTime(averageResponseTime)
 
       socket.emit('test-rps', { time, value: rps })
       socket.emit('test-cpu', { time, value: cpuPercent })
 
-      const responseTimes = sharedState.getResponseTimes()
-
-      socket.emit('test-response-time', { time, value: responseTimes })
+      socket.emit('test-response-time', { time, value: averageResponseTime })
     }, 1000)
 
     socket.on('disconnect', () => {
       clearInterval(intervalId)
+      sharedState.finalTest()
       console.log('Cliente desconectado de test')
-
-      const rpsData = sharedState.getRPS()
-      const cpuData = sharedState.getCPUPercent()
-      const responseTimeData = sharedState.getResponseTimes()
-
-      console.log('Datos acumulados:', {
-        rps: rpsData,
-        cpuPercent: cpuData,
-        responseTimes: responseTimeData,
-      })
     })
   })
 }

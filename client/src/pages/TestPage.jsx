@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
-import { ShowModel } from "../components/ShowModel.jsx";
+// import { ShowModel } from "../components/ShowModel.jsx";
 import { TestChart } from "../components/TestChart.jsx";
 
 export function TestPage() {
@@ -28,7 +28,7 @@ export function TestPage() {
   return (
     <section>
       <h1>Al cerrar el test termina el ajuste AJUSTANDO....</h1>
-      <ShowModel />
+      {/* <ShowModel /> */}
       <TestChart title={'Peticiones por segundo'} event={'test-rps'} socket={socket} />
       <TestChart title={'Porcentaje de CPU'} event={'test-cpu'} socket={socket} />
       <TestChart title={'Tiempos de respuesta'} event={'test-response-time'} socket={socket} />
