@@ -41,7 +41,7 @@ routerServer.get('/save-metrics', (req, res) => {
     }
 
     const avgResponseTimesPorSegundo = responseTimesPorSegundo.map(group =>
-      group.length > 0 ? group.reduce((a, b) => a + b, 0) / group.length : 0, // ternario para calcular promedios y evitar division entre 0
+      group.length > 0 ? group.reduce((a, b) => a + b, 0) / group.length : 0, // ternario evitar division entre 0
     )
 
     if (rpsData.length !== cpuData.length || rpsData.length !== avgResponseTimesPorSegundo.length) {

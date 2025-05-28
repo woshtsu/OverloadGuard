@@ -1,11 +1,11 @@
 import osUtils from 'os-utils'
 import { sharedState } from './sharedState.js'
 
-export function initWS({ websocketserver }) {
+export function initWS ({ websocketserver }) {
   const testNS = websocketserver.of('/test')
   const monitorNs = websocketserver.of('/monitor')
 
-  function getCPUPercent() {
+  function getCPUPercent () {
     return new Promise((resolve) => {
       osUtils.cpuUsage((cpuPercent) => {
         resolve(parseFloat((cpuPercent * 100).toFixed(2)))
