@@ -34,7 +34,6 @@ const morganStream = {
     // const steps = 100
     // const dt = 0.1
     // solveQueueDifferential(λ, μ, Q0, steps, dt)
-    // console.log('sharedState:', sharedState)
   },
 }
 
