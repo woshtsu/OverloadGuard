@@ -28,22 +28,11 @@ routerServer.get('/save-metrics', (req, res) => {
     const cpuData = sharedState.getCPUPercent()
     const responseTimes = sharedState.getaddaverageResponseTime()
 
-    const ginitTest = sharedState.getginitTest()
-    const gfinalTest = sharedState.getgfinalTest()
-
-    // Convertir tiempos a segundos desde el inicio
-    const startTime = Math.floor(ginitTest / 1000)
-    const endTime = Math.floor(gfinalTest / 1000)
-
-    // Filtrar datos basados en el tiempo en segundos
-    const datos = rpsData.map((r, i) => ({
-      r,
-      cpu: cpuData[i],
-      T: responseTimes[i],
-    })).filter((_, i) => {
-      const currentTime = Math.floor((ginitTest + i * 1000) / 1000)
-      return currentTime >= startTime && currentTime <= endTime
-    })
+    const datos = {
+      rpsData,
+      cpuData,
+      responseTimes
+    }
 
     const campos = ['r', 'cpu', 'T']
     const json2csv = new Parser({ fields: campos })

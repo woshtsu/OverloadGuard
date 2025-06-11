@@ -22,18 +22,13 @@ initWS({ websocketserver: io })
 
 const morganStream = {
   write: (message) => {
-    console.log('LOG DE MORGAN:', message)
+    console.log('LOG:', message)
     const match = message.match(/- (\d+\.\d*) ms/)
     if (match) {
       const responseTime = parseFloat(match[1])
       sharedState.addResponseTime(responseTime)
     }
-    // const λ = sharedState.calculateRPS()
-    // const μ = 10 // Supongamos una tasa de servicio constante
-    // const Q0 = 0
-    // const steps = 100
-    // const dt = 0.1
-    // solveQueueDifferential(λ, μ, Q0, steps, dt)
+
   },
 }
 

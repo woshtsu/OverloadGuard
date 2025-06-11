@@ -29,6 +29,7 @@ export function TestPage() {
     <section>
       <h1>Al cerrar el test termina el ajuste AJUSTANDO....</h1>
       {/* <ShowModel /> */}
+      <a href='http://localhost:1234/server/save-metrics' style={{ width: '600px', height: '300px', cursor: 'grab', background: 'black', color: 'white'}} >Terminar test</a>
       <TestChart title={'Peticiones por segundo'} event={'test-rps'} socket={socket} />
       <TestChart title={'Porcentaje de CPU'} event={'test-cpu'} socket={socket} />
       <TestChart title={'Tiempos de respuesta'} event={'test-response-time'} socket={socket} />
