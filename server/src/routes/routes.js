@@ -29,10 +29,12 @@ routerServer.get('/save-metrics', (req, res) => {
     const responseTimes = sharedState.getaddaverageResponseTime()
 
     const datos = {
-      rpsData,
-      cpuData,
-      responseTimes
+      'r' : rpsData,
+      'cpu': cpuData,
+      'T':responseTimes
     }
+
+    console.log(datos)
 
     const campos = ['r', 'cpu', 'T']
     const json2csv = new Parser({ fields: campos })
@@ -43,8 +45,6 @@ routerServer.get('/save-metrics', (req, res) => {
     console.log('Datos guardados en metrics.csv')
     res.status(200).json({
       message: 'Datos guardados en metrics.csv',
-      ginitTest,
-      gfinalTest,
       rpsData,
       cpuData,
       responseTimes,
