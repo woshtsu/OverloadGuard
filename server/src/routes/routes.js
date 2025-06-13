@@ -28,27 +28,22 @@ routerServer.get('/save-metrics', (req, res) => {
     const cpuData = sharedState.getCPUPercent()
     const responseTimes = sharedState.getaddaverageResponseTime()
 
-    const datos = {
-      'r' : rpsData,
-      'cpu': cpuData,
-      'T':responseTimes
-    }
-
-    console.log(datos)
+    const registros = rpsData.map((d, i) => ({
+      r: d,
+      cpu: cpuData[i],
+      T: responseTimes[i],
+    }))
 
     const campos = ['r', 'cpu', 'T']
     const json2csv = new Parser({ fields: campos })
-    const csv = json2csv.parse(datos)
+    const csv = json2csv.parse(registros)
 
     fs.writeFileSync('metrics.csv', csv)
 
     console.log('Datos guardados en metrics.csv')
     res.status(200).json({
       message: 'Datos guardados en metrics.csv',
-      rpsData,
-      cpuData,
-      responseTimes,
-      datos,
+      datos: csv,
     })
   } catch (error) {
     console.error('Error al guardar las métricas:', error)

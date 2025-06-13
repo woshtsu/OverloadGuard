@@ -6,7 +6,6 @@ import { routerServer } from './routes/routes.js'
 import { initWS } from './websocket.js'
 import { sharedState } from './sharedState.js'
 import morgan from 'morgan'
-import { solveQueueDifferential } from './utils/solveQueueDifferential.js'
 
 const app = express()
 const server = createServer(app)
@@ -28,7 +27,6 @@ const morganStream = {
       const responseTime = parseFloat(match[1])
       sharedState.addResponseTime(responseTime)
     }
-
   },
 }
 

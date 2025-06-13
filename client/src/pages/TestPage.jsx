@@ -1,10 +1,28 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
-// import { ShowModel } from "../components/ShowModel.jsx";
 import { TestChart } from "../components/TestChart.jsx";
+import { useNavigate } from 'react-router-dom'
 
 export function TestPage() {
-  const [socket, setSocket] = useState(null);
+  const [socket, setSocket] = useState(null)
+  const navigate = useNavigate();
+
+  const handleFinish = async () => {
+    try {
+      // Hacemos el GET al servidor
+      await fetch('http://localhost:1234/server/save-metrics', {
+        method: 'GET',
+        // Si necesitas credenciales o headers especiales, agrégalos aquí
+      });
+
+      // Redirigimos al inicio
+      navigate('/');
+    } catch (error) {
+      console.error('Error al guardar métricas:', error);
+      // Opcional: mostrar mensaje de error al usuario
+      navigate('/');
+    }
+  }
 
   useEffect(() => {
     // Crear la conexión de WebSocket
@@ -28,8 +46,12 @@ export function TestPage() {
   return (
     <section>
       <h1>Al cerrar el test termina el ajuste AJUSTANDO....</h1>
-      {/* <ShowModel /> */}
-      <a href='http://localhost:1234/server/save-metrics' style={{ width: '600px', height: '300px', cursor: 'grab', background: 'black', color: 'white'}} >Terminar test</a>
+      <button
+        style={{ width: '600px', height: '300px', cursor: 'grab', background: 'black', color: 'white' }}
+        onClick={handleFinish}
+      >
+        Terminar test
+      </button>
       <TestChart title={'Peticiones por segundo'} event={'test-rps'} socket={socket} />
       <TestChart title={'Porcentaje de CPU'} event={'test-cpu'} socket={socket} />
       <TestChart title={'Tiempos de respuesta'} event={'test-response-time'} socket={socket} />
